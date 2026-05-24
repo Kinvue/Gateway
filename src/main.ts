@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { setupSwagger } from './config';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -18,6 +19,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   )
+
+  setupSwagger(app);
+  logger.log(`Swagger available at http://localhost:${port}/docs`);
 
   await app.listen(port);
   logger.log(`Gateway started on port ${port}`);
