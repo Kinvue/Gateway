@@ -3,7 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './Interseptors/logging.interseptor';
+import { LoggingInterceptor } from './common';
+
 
 @Module({
   imports: [
