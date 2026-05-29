@@ -1,26 +1,27 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest } from '@kinvue/contracts/dist/gen/auth';
+import { LoginDto, RegisterDto } from 'src/dto/auth.dto';
 
-@Controller('auth')
+@Controller('api/v1/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService
   ) {}
 
   @Post('login')
-  public login ( @Body() dto : LoginRequest) {
+  public login ( @Body() dto : LoginDto) {
     return this.authService.login(dto);
   }
 
   @Post('register')
-  public register ( @Body() dto : RegisterRequest ) {
-    return this.authService.register
+  public register ( @Body() dto : RegisterDto ) {
+    return this.authService.register(dto);
   }
 
   @Post('refresh')
   public refresh ( @Body() dto : RefreshRequest) {
-    return this.authService.refresh
+    return this.authService.refresh(dto);
   }
 
   @Post('logout')
