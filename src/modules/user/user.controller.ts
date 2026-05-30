@@ -1,48 +1,65 @@
-import { Body, Controller, Get, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service';
+import { UpdateProfileDto } from 'src/dto/auth/updateProfile.dto';
+import { CreateProfileDto } from 'src/dto/auth/createProfile.dto';
 
 @Controller('api/v1/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  public getProfile() {
-    return this.userService.getProfile('profile_123');
+  public getCurrentProfile() {
+    const jwt = "JWT-from_guard";
+    const userPlaysholderData = {
+      userId: "Id-from-pased-jwt"
+    } 
+    return this.userService.getProfile(userPlaysholderData.userId);
   }
+
+  @Get('')
+  public getProfile(@Query('id') id : string) {
+    return this.userService.getProfile(id);
+  }
+
 
   @Put('me')
-  public updateProfile(@Body() body) {
+  public updateProfile(@Body() body : UpdateProfileDto) {
     return this.userService.updateProfile({
-      userId: 'profile_123',
+      // userId: 'profile_123',
       ...body,
     });
   }
 
-  @Get()
-  public searchUsers(
-    @Query('username') username?: string,
-    @Query('displayName') displayName?: string,
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string,
-  ) {
-    return this.userService.searchUsers({
-      username,
-      displayName,
-      limit: limit ? Number(limit) : undefined,
-      offset: offset ? Number(offset) : undefined,
-    });
+  @Post('me')
+  public createProfile(@Body() body : CreateProfileDto){
+    return this.userService.createProfile(body);
   }
 
-  @Get('settings')
-  public getSettings() {
-    return this.userService.getSettings('profile_123');
-  }
+  // @Get()
+  // public searchUsers(
+  //   @Query('username') username?: string,
+  //   @Query('displayName') displayName?: string,
+  //   @Query('limit') limit?: string,
+  //   @Query('offset') offset?: string,
+  // ) {
+  //   return this.userService.searchUsers({
+  //     username,
+  //     displayName,
+  //     limit: limit ? Number(limit) : undefined,
+  //     offset: offset ? Number(offset) : undefined,
+  //   });
+  // }
 
-  @Put('settings')
-  public updateSettings(@Body() body) {
-    return this.userService.updateSettings({
-      userId: 'profile_123',
-      ...body,
-    });
-  }
+  // @Get('settings')
+  // public getSettings() {
+  //   return this.userService.getSettings('profile_123');
+  // }
+
+  // @Put('settings')
+  // public updateSettings(@Body() body) {
+  //   return this.userService.updateSettings({
+  //     userId: 'profile_123',
+  //     ...body,
+  //   });
+  // }
 }
