@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common';
 import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import { AuthModule } from './modules/auth/auth.module';
       envFilePath: '.env'
     }),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
