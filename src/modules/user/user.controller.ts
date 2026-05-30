@@ -7,24 +7,42 @@ export class UserController {
 
   @Get('me')
   public getProfile() {
-    return this.userService.getProfile("sdhfsdfas");
+    return this.userService.getProfile('profile_123');
   }
 
   @Put('me')
-  public updateProfile() {
-    return this.userService.updateProfile("sdhfsdfas");
+  public updateProfile(@Body() body) {
+    return this.userService.updateProfile({
+      userId: 'profile_123',
+      ...body,
+    });
   }
 
-  @Get('')
-  public (
-    @Query('limit') limit : number,
-    @Query('offset') offset : number,
-    @Body() body : {email:string, name: string}
+  @Get()
+  public searchUsers(
+    @Query('username') username?: string,
+    @Query('displayName') displayName?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
   ) {
     return this.userService.searchUsers({
-      limit,
-      offset,
-      ...body
+      username,
+      displayName,
+      limit: limit ? Number(limit) : undefined,
+      offset: offset ? Number(offset) : undefined,
+    });
+  }
+
+  @Get('settings')
+  public getSettings() {
+    return this.userService.getSettings('profile_123');
+  }
+
+  @Put('settings')
+  public updateSettings(@Body() body) {
+    return this.userService.updateSettings({
+      userId: 'profile_123',
+      ...body,
     });
   }
 }
