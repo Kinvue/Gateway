@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest } from '@kinvue/contracts/dist/gen/auth';
-import { LoginDto, RegisterDto } from 'src/dto/auth.dto';
+import { LoginDto, RegisterDto } from 'src/dto/auth/auth.dto';
 
 @Controller('api/v1/auth')
 export class AuthController {
