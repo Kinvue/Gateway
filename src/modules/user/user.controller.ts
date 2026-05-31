@@ -15,7 +15,7 @@ export class UserController {
   public getCurrentProfile() {
     // const jwt = "JWT-from_guard";
     const userPlaysholderData = {
-      userId: "Id-from-pased-jwt"
+      userId: "550e8400-e29b-41d4-a716-446655440000"
     } 
     return this.userService.getProfile(userPlaysholderData.userId);
   }
@@ -23,7 +23,7 @@ export class UserController {
   public updateProfile(@Body() body : UpdateProfileDto) {
     // const jwt = "JWT-from_guard";
     const userPlaysholderData = {
-      userId: "Id-from-pased-jwt"
+      userId: "550e8400-e29b-41d4-a716-446655440000"
     } 
     return this.userService.updateProfile({
       userId: userPlaysholderData.userId,
