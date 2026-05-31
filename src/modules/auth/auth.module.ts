@@ -5,6 +5,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { authGrpcConfig } from 'src/config';
 import { AUTH_V1_PACKAGE_NAME } from '@kinvue/contracts/dist/gen/auth';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -15,10 +17,12 @@ import { AUTH_V1_PACKAGE_NAME } from '@kinvue/contracts/dist/gen/auth';
         inject: [ConfigService],
         useFactory: authGrpcConfig,
       }
-    ])
+    ]),
+    PassportModule
   ],
 
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
+  exports: [PassportModule],
 })
 export class AuthModule {}
