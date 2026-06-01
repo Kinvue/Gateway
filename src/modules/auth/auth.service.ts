@@ -2,6 +2,8 @@ import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest, type Auth
 import { AUTH_PACKAGE, AUTH_SERVICE_NAME } from '@kinvue/contracts/dist/gen/constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
+import { RegisterData } from './types/registerData';
+import { LoginData } from './types/loginData';
 
 @Injectable()
 export class AuthService {
@@ -17,12 +19,29 @@ export class AuthService {
             this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
     }
 
-    public login ( userCredentials : LoginRequest ) {
-        return this.authClient.login(userCredentials);
+    public login ( newData : LoginData ) {
+        const correctDataFormat = {
+            email: newData.email,
+            password : newData.password,
+            clientInfo : {
+                ipAddress: newData.ip,
+                userAgent: newData.userAgent,
+            }
+        }
+        return this.authClient.login(correctDataFormat as LoginRequest );
     }
 
-    public register ( userCredentials : RegisterRequest ) {
-        return this.authClient.register(userCredentials);
+    public register ( newData : RegisterData) {
+        const correctDataFormat = {
+            email: newData.email,
+            password : newData.password,
+            clientInfo : {
+                ipAddress: newData.ip,
+                userAgent: newData.userAgent,
+                name: newData.name
+            }
+        }
+        return this.authClient.register(correctDataFormat as RegisterRequest);
     }
 
     public refresh ( userCredentials : RefreshRequest ) {

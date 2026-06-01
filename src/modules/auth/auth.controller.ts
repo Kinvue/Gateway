@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Headers, Body, Controller, Ip, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest } from '@kinvue/contracts/dist/gen/auth';
 import { LoginDto, RegisterDto } from 'src/dto/auth/auth.dto';
+import { RegisterData } from './types/registerData';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -10,13 +11,30 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  public login ( @Body() dto : LoginDto) {
-    return this.authService.login(dto);
+  public login ( 
+    @Body() dto : LoginDto,
+    @Headers('user-agent') userAgent: string, 
+    @Ip() ip: string,
+  ) {
+    return this.authService.login({
+      ip,
+      userAgent,
+      ...dto,
+    });
   }
 
   @Post('register')
-  public register ( @Body() dto : RegisterDto ) {
-    return this.authService.register(dto);
+  public register ( 
+    @Headers('user-agent') userAgent: string, 
+    @Ip() ip: string,
+    @Body() dto : RegisterDto 
+  ) {
+    const newDate = {
+      ip,
+      userAgent,
+      ...dto
+    } as RegisterData
+    return this.authService.register(newDate);
   }
 
   @Post('refresh')
