@@ -9,7 +9,9 @@ async function bootstrap() {
   // Init
   const logger = new Logger('Main');
   const app = await NestFactory.create(AppModule);
+
   app.enableShutdownHooks();
+
 
   const configureService = app.get(ConfigService);
   const port = configureService.getOrThrow<number>('PORT');

@@ -7,23 +7,22 @@ import { firstValueFrom } from 'rxjs';
 
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  public async login ( 
-    @Body() dto : LoginDto,
-    @Headers('user-agent') userAgent: string, 
+  public async login(
+    @Body() dto: LoginDto,
+    @Headers('user-agent') userAgent: string,
     @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-
-    const authResponse = await firstValueFrom( this.authService.login({
-      ip,
-      userAgent,
-      ...dto,
-    }) );
+    const authResponse = await firstValueFrom(
+      this.authService.login({
+        ip,
+        userAgent,
+        ...dto,
+      }),
+    );
 
     this.setRefreshTokenCookie(res, authResponse.refreshToken);
 
@@ -33,50 +32,60 @@ export class AuthController {
     };
   }
 
+  @Post('register')
+  public async register(
+    @Headers('user-agent') userAgent: string,
+    @Ip() ip: string,
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const newDate = {
+      ip,
+      userAgent,
+      ...dto,
+    };
 
+    const authResponse = await firstValueFrom(
+      this.authService.register(newDate),
+    );
 
-@Post('register')
-public async register(
-  @Headers('user-agent') userAgent: string,
-  @Ip() ip: string,
-  @Body() dto: RegisterDto,
-  @Res({ passthrough: true }) res: Response,
-) {
-  const newDate = {
-    ip,
-    userAgent,
-    ...dto,
-  };
+    this.setRefreshTokenCookie(res, authResponse.refreshToken);
 
-  const authResponse = await firstValueFrom(
-    this.authService.register(newDate),
-  );
-
-  this.setRefreshTokenCookie(res, authResponse.refreshToken);
-
-  return {
-    accessToken: authResponse.accessToken,
-    user: authResponse.user,
-  };
-}
-
-
+    return {
+      accessToken: authResponse.accessToken,
+      user: authResponse.user,
+    };
+  }
 
   @Post('refresh')
-  public refresh ( @Body() dto : RefreshRequest) {
-    return this.authService.refresh(dto);
+  public async refresh(
+    @Req() req: Request,
+    @Headers('user-agent') userAgent: string,
+    @Ip() ip: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    const authResponse = await firstValueFrom(
+      this.authService.refresh(refreshToken)
+    );
+    
+    this.setRefreshTokenCookie(res, authResponse.refreshToken);
+
+    return authResponse.accessToken; 
   }
 
   @Post('logout')
-  public logout ( @Body() dto : LogoutRequest ) {
+  public logout(@Body() dto: LogoutRequest) {
     return this.authService.logout(dto);
   }
 
-
-
-
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
-    res.cookie('refreshToken', refreshToken, this.getRefreshTokenCookieOptions());
+    res.cookie(
+      'refreshToken',
+      refreshToken,
+      this.getRefreshTokenCookieOptions(),
+    );
   }
 
   private getRefreshTokenCookieOptions() {

@@ -44,8 +44,8 @@ export class AuthService {
         return this.authClient.register(correctDataFormat as RegisterRequest);
     }
 
-    public refresh ( userCredentials : RefreshRequest ) {
-        return this.authClient.refresh(userCredentials);
+    public refresh (dto: RefreshRequest) {
+        return this.authClient.refresh(dto);
     }
 
     public logout ( userCredentials : LogoutRequest ) {
