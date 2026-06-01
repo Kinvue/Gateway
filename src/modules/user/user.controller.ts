@@ -1,47 +1,65 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { UserService } from './user.service';
 import { UpdateProfileDto } from 'src/dto/user/updateProfile.dto';
 import { UpdateSettingsDto } from 'src/dto/user/updateSettings.dto';
 import { SendFriendRequestDto } from 'src/dto/user/sendFriendRequest.dto';
 import { RespondFriendRequestDto } from 'src/dto/user/respondFriendRequest.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { UserPayload } from '@kinvue/contracts/dist/gen/auth';
 
+type AuthRequest = Request & {
+  user: UserPayload;
+};
 
-
-@UseGuards(JwtAuthGuard)
 @Controller('api/v1/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('me')
-  public getCurrentProfile(@Req() req) {
-    return this.userService.getProfile(req.user.id,);
+  public getCurrentProfile(@Req() req: AuthRequest) {
+    return this.userService.getProfile(req.user.userId);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('me')
-  public updateProfile(@Body() body : UpdateProfileDto, @Req() req) {
+  public updateProfile(@Body() body: UpdateProfileDto, @Req() req: AuthRequest) {
     return this.userService.updateProfile({
-      userId: req.user.id,
+      userId: req.user.userId,
       ...body,
     });
   }
-  // @Post('me')
-  // public createProfile(@Body() body : CreateProfileDto){
-  //   return this.userService.createProfile({authUserId: "550e8400-e29b-41d4-a716-446655440000", ...body});
-  // }
 
-
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('settings')
-  public getSettings(@Req() req) {
-    return this.userService.getSettings(req.user.id);
+  public getSettings(@Req() req: AuthRequest) {
+    return this.userService.getSettings(req.user.userId);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('settings')
-  public updateSettings(@Req() req, @Body() body : UpdateSettingsDto) {
+  public updateSettings(@Req() req: AuthRequest, @Body() body: UpdateSettingsDto) {
     return this.userService.updateSettings({
-      userId: req.user.id,
+      userId: req.user.userId,
       ...body,
     });
   }
-
 
   @Get('search')
   public searchUsers(
@@ -58,29 +76,37 @@ export class UserController {
     });
   }
 
-
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post('friends/send')
-  public sendFriendRequest(@Req() req, @Body() body : SendFriendRequestDto) {
-    const data = {
+  public sendFriendRequest(
+    @Req() req: AuthRequest,
+    @Body() body: SendFriendRequestDto,
+  ) {
+    return this.userService.sendFriendRequest({
       receiverId: body.receiverId,
-      requesterId : req.user.id
-    }
-    return this.userService.sendFriendRequest(data)
+      requesterId: req.user.userId,
+    });
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post('friends/respond')
-  public respondFriendRequest(@Body() body : RespondFriendRequestDto){
+  public respondFriendRequest(@Body() body: RespondFriendRequestDto) {
     return this.userService.respondFriendRequest(body);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('friends')
   public getFriends(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Query('status') status?: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
-
     return this.userService.getFriends({
-      userId: req.user.id,
+      userId: req.user.userId,
       status,
       limit: limit ? Number(limit) : undefined,
       offset: offset ? Number(offset) : undefined,
