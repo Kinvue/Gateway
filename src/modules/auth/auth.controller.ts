@@ -1,6 +1,6 @@
 import { Headers, Body, Controller, Ip, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest } from '@kinvue/contracts/dist/gen/auth';
+import { LogoutRequest, RefreshRequest } from '@kinvue/contracts/dist/gen/auth';
 import { LoginDto, RegisterDto } from 'src/dto/auth/auth.dto';
 import { RegisterData } from './types/registerData';
 
