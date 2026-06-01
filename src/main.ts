@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from './config';
 import { AllExceptionsFilter } from './common';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   // Init
@@ -11,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableShutdownHooks();
-
+  app.use(cookieParser());
 
   const configureService = app.get(ConfigService);
   const port = configureService.getOrThrow<number>('PORT');
