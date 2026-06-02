@@ -69,7 +69,7 @@ export class AuthController {
     const authResponse = await firstValueFrom(
       this.authService.refresh(refreshToken)
     );
-    
+
     this.setRefreshTokenCookie(res, authResponse.refreshToken);
 
     return authResponse.accessToken; 
@@ -82,7 +82,7 @@ export class AuthController {
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
     res.cookie(
-      'refreshToken',
+      'refresh_token',
       refreshToken,
       this.getRefreshTokenCookieOptions(),
     );

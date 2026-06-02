@@ -14,6 +14,11 @@ async function bootstrap() {
   app.enableShutdownHooks();
   app.use(cookieParser());
 
+  app.enableCors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  });
+
   const configureService = app.get(ConfigService);
   const port = configureService.getOrThrow<number>('PORT');
   
